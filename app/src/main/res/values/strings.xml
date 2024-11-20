@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MobileAppProject</string>
+    <string name="landing_screen_description">A collaborative team working</string>
+    <string name="Brief_description">Brief description of the application</string>
+    <string name="log_in">LogIn</string>
+    <string name="sign_up">SignUp</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="back_button">Back</string>
 </resources>
