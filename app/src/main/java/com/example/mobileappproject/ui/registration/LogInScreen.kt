@@ -1,4 +1,4 @@
-package com.example.mobileappproject.ui.screens
+package com.example.mobileappproject.ui.registration
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +16,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobileappproject.R
+import com.example.mobileappproject.ui.navigation.NavigationDestination
+
+
+object LogInDestination : NavigationDestination {
+    override val route = "login"
+    override val titleRes = R.string.log_in
+}
+
+
 
 @Composable
 fun LoginScreen(

@@ -1,4 +1,4 @@
-package com.example.mobileappproject.ui.screens
+package com.example.mobileappproject.ui.registration
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -10,6 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobileappproject.R
+import com.example.mobileappproject.ui.navigation.NavigationDestination
+
+
+object ResetPasswordDestination : NavigationDestination {
+    override val route = "resetPassword"
+    override val titleRes = R.string.reset_password
+}
+
 
 @Composable
 fun ResetPasswordScreen(

@@ -11,4 +11,21 @@
     <string name="orders">Orders</string>
     <string name="services">Services</string>
     <string name="profile">Profile</string>
+    <string name="cart_icon">Shopping Cart</string>
+    <string name="menu_icon">Menu</string>
+    <string name="search_placeholder">Search</string>
+    <string name="home">Home</string>
+    <string name="log_out">Log Out</string>
+    <string name="guest">Guest</string>
+    <string name="no_email">No email provided</string>
+    <string name="name">John Doe</string>
+    <string name="email">johndoe@gmail.com</string>
+    <string name="sign_up_message">Let’s,
+           Get Started</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">Email</string>
+    <string name="phone">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="conf">Confirm Password</string>
+    <string name="register">Register</string>
 </resources>

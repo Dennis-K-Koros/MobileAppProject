@@ -1,4 +1,4 @@
-package com.example.mobileappproject.ui.screens
+package com.example.mobileappproject.ui.registration
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
