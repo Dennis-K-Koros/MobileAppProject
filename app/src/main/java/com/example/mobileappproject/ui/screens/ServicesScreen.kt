@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
@@ -67,6 +65,7 @@ fun ServicesScreen(
                     title = stringResource(R.string.app_name),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
+                    navigateUp = { navController.popBackStack() },
                     onCartClick = { /* Handle Cart Click */ },
                     onMenuClick = {
                         coroutineScope.launch { drawerState.open() }

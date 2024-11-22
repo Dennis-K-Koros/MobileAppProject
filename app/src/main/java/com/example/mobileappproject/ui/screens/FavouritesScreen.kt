@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ fun FavoritesScreen(
     navController: NavHostController,
 ) {
     val tabs = listOf("Services", "Products")
-    val selectedIndex = remember { androidx.compose.runtime.mutableStateOf(0) }
+    val selectedIndex = remember { mutableStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -58,6 +59,7 @@ fun FavoritesScreen(
                     title = stringResource(R.string.app_name),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
+                    navigateUp = { navController.popBackStack() },
                     onCartClick = { /* Handle Cart Click */ },
                     onMenuClick = {
                         coroutineScope.launch {
@@ -74,7 +76,7 @@ fun FavoritesScreen(
                         Tab(
                             selected = selectedIndex.value == index,
                             onClick = { selectedIndex.value = index },
-                            text = { androidx.compose.material3.Text(text = title) }
+                            text = { Text(text = title) }
                         )
                     }
                 }

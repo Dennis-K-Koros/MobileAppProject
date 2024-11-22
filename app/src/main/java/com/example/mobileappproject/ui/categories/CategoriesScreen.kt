@@ -67,6 +67,7 @@ fun CategoriesScreen(
                     title = stringResource(R.string.categories),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
+                    navigateUp = { navController.popBackStack() },
                     onCartClick = { /* Handle Cart Click */ },
                     onMenuClick = {
                         coroutineScope.launch {
