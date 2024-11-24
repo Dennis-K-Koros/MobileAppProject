@@ -12,7 +12,7 @@ class ApiServiceRepository(
     private val api: ServiceApi
 ) : ServiceRepository {
     override fun getAllServiceStream(): Flow<List<Service>> = serviceDao.getAllServices()
-    override fun getServiceStream(id: Int): Flow<Service?> =serviceDao.getService(id)
+    override fun getServiceStream(id: String): Flow<Service?> =serviceDao.getService(id)
     override suspend fun insertService(service: Service) = serviceDao.insert(service)
     override suspend fun deleteService(service: Service) = serviceDao.delete(service)
     override suspend fun updateService(service: Service) = serviceDao.update(service)

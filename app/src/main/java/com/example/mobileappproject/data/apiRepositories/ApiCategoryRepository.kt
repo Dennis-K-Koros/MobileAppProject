@@ -13,7 +13,7 @@ class ApiCategoryRepository(
 ) : CategoryRepository {
 
     override fun getAllCategoryStream(): Flow<List<Category>> = categoryDao.getAllCategory()
-    override fun getCategoryStream(id: Int): Flow<Category?> = categoryDao.getCategory(id)
+    override fun getCategoryStream(id: String): Flow<Category?> = categoryDao.getCategory(id)
     override suspend fun insertCategory(category: Category) = categoryDao.insert(category)
     override suspend fun deleteCategory(category: Category) = categoryDao.delete(category)
     override suspend fun updateCategory(category: Category) = categoryDao.update(category)

@@ -1,5 +1,6 @@
 package com.example.mobileappproject.data.api
 
+import com.example.mobileappproject.data.entities.LoginRequest
 import com.example.mobileappproject.data.entities.User
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,7 +18,7 @@ interface UserApi {
     suspend fun signUp(@Body user: User): Response<User>
 
     @POST("user/signin")
-    suspend fun signIn(@Body user: User): Response<User>
+    suspend fun signIn(@Body user: LoginRequest): Response<User>
 
     @POST("user/resendVerificationLink")
     suspend fun resendVerificationLink(@Body user: User): Response<User>

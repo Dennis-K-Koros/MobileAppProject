@@ -12,25 +12,26 @@ class ApiOrderRepository (
     private val orderDao: OrderDao,
     private val api: OrderApi
 ) : OrderRepository {
-    override fun getOrderStream(userId: Int): Flow<List<Order?>> = orderDao.getOrders(userId)
-    override fun getSpecificOrderStream(id: Int, serviceId : Int): Flow<Order?> = orderDao.getSpecificOrder(id,serviceId)
+    override fun getOrderStream(userId: String): Flow<List<Order?>> = orderDao.getOrders(userId)
+    override fun getSpecificOrderStream(userId: String, serviceId : String): Flow<Order?> = orderDao.getSpecificOrder(userId,serviceId)
     override suspend fun insertOrder(order: Order) = orderDao.insert(order)
     override suspend fun deleteOrder(order: Order) = orderDao.delete(order)
     override suspend fun updateOrder(order: Order) = orderDao.update(order)
-    override suspend fun fetchOrdersFromApi(userId: Int): List<Order> {
+    override suspend fun fetchOrdersFromApi(userId: String): List<Order> {
         return try {
-            val response = api.getUserOrders(userId.toString())
+            val response = api.getUserOrders(userId)
             if (response.isSuccessful) {
                 response.body()?.let { orders ->
-                    orders.forEach { orderDao.insert(it) }
+                    orders.forEach { orderDao.insert(it) } // Cache fetched orders
                     return orders
                 }
             }
-            orderDao.getOrders(userId).firstOrNull() ?: emptyList() // Fallback to cached data
+            orderDao.getOrders(userId).firstOrNull() ?: emptyList() // Fallback to local cache
         } catch (e: Exception) {
             println("Error fetching orders: ${e.message}")
             orderDao.getOrders(userId).firstOrNull() ?: emptyList()
         }
     }
+
 
 }

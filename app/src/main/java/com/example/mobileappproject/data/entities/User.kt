@@ -20,3 +20,8 @@ data class User(
     @TypeConverters(DateConverter::class) val createdAt: Date,
     @TypeConverters(DateConverter::class) val updatedAt: Date
 )
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)

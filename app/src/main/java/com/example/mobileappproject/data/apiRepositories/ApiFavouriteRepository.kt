@@ -12,7 +12,7 @@ class ApiFavouriteRepository(
     private val api: FavouriteApi
 ) : FavouriteRepository {
     // Stream a list of favourites for the user
-    override fun getFavouriteStream(userId: Int): Flow<List<Favourite>> =
+    override fun getFavouriteStream(userId: String): Flow<List<Favourite>> =
         favouriteDao.getFavourites(userId)
 
     override suspend fun insertFavourite(favourite: Favourite) =
@@ -24,9 +24,9 @@ class ApiFavouriteRepository(
     override suspend fun updateFavourite(favourite: Favourite) =
         favouriteDao.update(favourite)
 
-    override suspend fun fetchFavouritesFromApi(userId: Int): List<Favourite> {
+    override suspend fun fetchFavouritesFromApi(userId: String): List<Favourite> {
         return try {
-            val response = api.getFavourites(userId.toString())
+            val response = api.getFavourites(userId)
             if (response.isSuccessful && response.body() != null) {
                 response.body()?.let { favourites ->
                     favouriteDao.insertAll(favourites) // Save API favourites to local DB

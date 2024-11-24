@@ -1,4 +1,4 @@
-package com.example.mobileappproject.ui.home
+package com.example.mobileappproject.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,9 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
-import com.example.mobileappproject.data.ServiceItem
+import com.example.mobileappproject.data.entities.Category
+import com.example.mobileappproject.data.entities.Service
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
+import com.example.mobileappproject.viewmodels.CategoriesViewModel
+import com.example.mobileappproject.viewmodels.ServiceViewModel
+import com.example.mobileappproject.viewmodels.UserViewModel
 import kotlinx.coroutines.launch
 
 
@@ -31,21 +35,24 @@ object HomeDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = HomeViewModel(), // Pass the ViewModel instance
+    serviceViewModel: ServiceViewModel, // Inject ViewModel instances
+    categoriesViewModel: CategoriesViewModel,
+    userViewModel: UserViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val groupedServices = homeViewModel.services.groupBy { it.category }
+
+    // Collect data from ViewModels
+    val services by serviceViewModel.services.collectAsState()
+    val categories by categoriesViewModel.categories.collectAsState()
 
     AppDrawer(
-        isLoggedIn = true,
-        userName = stringResource(R.string.name),
-        userEmail = stringResource(R.string.email),
+        userViewModel = userViewModel,
         navController = navController,
-        drawerState = drawerState // Pass drawer state
+        drawerState = drawerState
     ) {
         Scaffold(
             modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -56,9 +63,7 @@ fun HomeScreen(
                     scrollBehavior = scrollBehavior,
                     onCartClick = { /* Handle Cart Click */ },
                     onMenuClick = {
-                        coroutineScope.launch {
-                            drawerState.open() // Open the drawer when the menu is clicked
-                        }
+                        coroutineScope.launch { drawerState.open() }
                     }
                 )
             }
@@ -74,10 +79,15 @@ fun HomeScreen(
                     SearchBar(modifier = Modifier.padding(horizontal = 16.dp))
                 }
 
-                // Service Categories Section
-                groupedServices.forEach { (category, services) ->
+                // Categories Carousel Section
+                item {
+                    CategoryCarousel(categories = categories)
+                }
+
+                // Service List Section
+                services.groupBy { it.subcategory }.forEach { (subcategory, services) ->
                     item {
-                        ServiceCategoryCarousel(category = category, services = services)
+                        ServiceCategoryCarousel(category = subcategory, services = services)
                     }
                 }
             }
@@ -98,7 +108,26 @@ fun SearchBar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ServiceCategoryCarousel(category: String, services: List<ServiceItem>, modifier: Modifier = Modifier) {
+fun CategoryCarousel(categories: List<Category>, modifier: Modifier = Modifier) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(categories) { category ->
+            Text(
+                text = category.name,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clickable { /* Handle category click */ }
+            )
+        }
+    }
+}
+
+@Composable
+fun ServiceCategoryCarousel(category: String, services: List<Service>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(8.dp)) {
         Text(
             text = category,
@@ -118,7 +147,7 @@ fun ServiceCategoryCarousel(category: String, services: List<ServiceItem>, modif
 }
 
 @Composable
-fun ServiceCard(service: ServiceItem, modifier: Modifier = Modifier) {
+fun ServiceCard(service: Service, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .size(150.dp)
@@ -130,14 +159,16 @@ fun ServiceCard(service: ServiceItem, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(8.dp)
         ) {
-            Icon(
-                painter = painterResource(service.imageRes),
-                contentDescription = service.name,
-                modifier = Modifier.size(48.dp)
-            )
+            service.image?.let {
+                Icon(
+                    painter = painterResource(R.drawable.service_placeholder), // Replace with actual image handling
+                    contentDescription = service.serviceName,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = service.name,
+                text = service.serviceName,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )

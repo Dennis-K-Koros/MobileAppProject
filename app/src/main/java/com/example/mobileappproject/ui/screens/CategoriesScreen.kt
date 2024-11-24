@@ -1,25 +1,19 @@
-package com.example.mobileappproject.ui.categories
+package com.example.mobileappproject.ui.screens
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,10 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
-import com.example.mobileappproject.data.CategoryItem
+import com.example.mobileappproject.data.entities.Category
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
-import com.example.mobileappproject.ui.home.SearchBar
+import com.example.mobileappproject.viewmodels.CategoriesViewModel
+import com.example.mobileappproject.viewmodels.UserViewModel
 import kotlinx.coroutines.launch
 
 object CategoriesDestination : NavigationDestination {
@@ -39,24 +34,23 @@ object CategoriesDestination : NavigationDestination {
     override val titleRes = R.string.categories
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
-    categoriesViewModel: CategoriesViewModel = CategoriesViewModel(),
     navController: NavHostController,
-    onCategoryClick: (String) -> Unit,
+    categoriesViewModel: CategoriesViewModel,
+    userViewModel: UserViewModel,
+    onSubcategoryClick: (String) -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val groupedCategories = categoriesViewModel.categories.groupBy { it.category }
+    val categories by categoriesViewModel.categories.collectAsState()
+    val groupedCategories = categories.groupBy { it.name }
 
     AppDrawer(
-        isLoggedIn = true,
-        userName = stringResource(R.string.name),
-        userEmail = stringResource(R.string.email),
+        userViewModel = userViewModel,
         navController = navController,
         drawerState = drawerState
     ) {
@@ -83,18 +77,18 @@ fun CategoriesScreen(
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp)
             ) {
-                // Search Bar
-                item {
-                    SearchBar(modifier = Modifier.padding(horizontal = 16.dp))
-                }
-
-                // Grouped categories
-                groupedCategories.forEach { (parentCategory, subCategories) ->
+                groupedCategories.forEach { (categoryName, categories) -> // Grouped by category name
                     item {
-                        CategoryCarousel(
-                            category = parentCategory,
-                            subItems = subCategories,
-                            onCategoryClick = onCategoryClick
+                        Text(
+                            text = categoryName,
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                    item {
+                        SubcategoriesGrid(
+                            subcategories = categories.flatMap { it.subcategories }, // Extract subcategories
+                            onSubcategoryClick = onSubcategoryClick
                         )
                     }
                 }
@@ -104,36 +98,31 @@ fun CategoriesScreen(
 }
 
 @Composable
-fun CategoryCarousel(
-    category: String,
-    subItems: List<CategoryItem>,
-    onCategoryClick: (String) -> Unit,
+fun SubcategoriesGrid(
+    subcategories: List<String>, // Use List<String> to represent subcategory names
+    onSubcategoryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) {
-        Text(
-            text = category,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(start = 16.dp)
-        )
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(subItems) { subItem ->
-                CategoryCard(
-                    name = subItem.name,
-                    imageRes = subItem.imageRes,
-                    onClick = { onCategoryClick(subItem.name) }
-                )
-            }
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2), // 2 columns for a grid layout
+        contentPadding = PaddingValues(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        items(subcategories) { subcategoryName -> // This now works with List<String>
+            SubcategoryCard(
+                name = subcategoryName,
+                imageRes = R.drawable.service_placeholder, // Replace with your actual image
+                onClick = { onSubcategoryClick(subcategoryName) }
+            )
         }
     }
 }
 
+
 @Composable
-fun CategoryCard(
+fun SubcategoryCard(
     name: String,
     @DrawableRes imageRes: Int,
     onClick: () -> Unit,
@@ -141,7 +130,8 @@ fun CategoryCard(
 ) {
     Card(
         modifier = modifier
-            .size(120.dp)
+            .fillMaxWidth()
+            .aspectRatio(1f) // Makes the card square
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -164,8 +154,4 @@ fun CategoryCard(
         }
     }
 }
-
-
-
-
 

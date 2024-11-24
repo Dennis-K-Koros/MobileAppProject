@@ -11,21 +11,24 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface OrderApi {
-    @GET("order/user/{userId}/order/{orderId}") // Adjust to your endpoint
-    suspend fun getSpecificOrder(@Path("id") id: String ): Response<Order>
+    @GET("order/user/{userId}/order/{orderId}")
+    suspend fun getSpecificOrder(
+        @Path("userId") userId: String,
+        @Path("orderId") orderId: String
+    ): Response<Order>
 
-    @GET("order/user/{id}")
-    suspend fun getUserOrders(@Path("id") id: String): Response<List<Order>>
+    @GET("order/user/{userId}")
+    suspend fun getUserOrders(@Path("userId") userId: String): Response<List<Order>>
 
-    @GET("order/{id}")
-    suspend fun getOrderById(@Path("id") id: String): Response<Order>
+    @GET("order/{orderId}")
+    suspend fun getOrderById(@Path("orderId") orderId: String): Response<Order>
 
     @POST("order/create")
     suspend fun createOrder(@Body order: Order): Response<Order>
 
-    @PUT("order/update/{id}")
-    suspend fun updateOrder(@Path("id") id: String, @Body order: Order): Response<Order>
+    @PUT("order/update/{orderId}")
+    suspend fun updateOrder(@Path("orderId") orderId: String, @Body order: Order): Response<Order>
 
-    @DELETE("order/delete/{id}")
-    suspend fun deleteOrder(@Path("id") id: String): Response<Void>
+    @DELETE("order/delete/{orderId}")
+    suspend fun deleteOrder(@Path("orderId") orderId: String): Response<Void>
 }

@@ -22,7 +22,7 @@ interface CategoryDao {
     suspend fun delete(category: Category)
 
     @Query("SELECT * from category WHERE id = :id")
-    fun getCategory(id: Int): Flow<Category>
+    fun getCategory(id: String): Flow<Category>
 
 
     @Query("SELECT * from category ORDER BY name ASC")

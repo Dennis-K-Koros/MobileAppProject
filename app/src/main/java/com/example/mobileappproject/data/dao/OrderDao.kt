@@ -21,11 +21,12 @@ interface OrderDao {
     @Delete
     suspend fun delete(order: Order)
 
-    @Query("SELECT * from `order` WHERE customer = :id")
-    fun getOrders(id: Int): Flow<List<Order>>
+    @Query("SELECT * FROM `order` WHERE userId = :userId")
+    fun getOrders(userId: String): Flow<List<Order>>
 
 
-    @Query("SELECT * from `order` WHERE customer = :id AND service = :serviceId")
-    fun getSpecificOrder(id: Int, serviceId: Int): Flow<Order>
+
+    @Query("SELECT * from `order` WHERE userId = :userId AND service = :serviceId")
+    fun getSpecificOrder(userId: String, serviceId: String): Flow<Order>
 
 }

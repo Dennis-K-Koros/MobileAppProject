@@ -10,7 +10,7 @@ import java.util.Date
 @Entity(tableName = "Order")
 data class Order (
     @PrimaryKey(autoGenerate = true) val id: Int = 0, // Auto-generates the ID
-    val customer: String,
+    val userId: String,
     val technician: String,
     val service: String,
     val status: String,

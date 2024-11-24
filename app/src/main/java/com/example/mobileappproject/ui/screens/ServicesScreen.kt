@@ -29,8 +29,6 @@ import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
 import com.example.mobileappproject.data.ServiceItem
 import com.example.mobileappproject.ui.components.AppDrawer
-import com.example.mobileappproject.ui.home.HomeViewModel
-import com.example.mobileappproject.ui.home.SearchBar
 import com.example.mobileappproject.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 

@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,25 +21,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mobileappproject.R
-import com.example.mobileappproject.ui.categories.CategoriesDestination
+import com.example.mobileappproject.ui.screens.CategoriesDestination
 import com.example.mobileappproject.ui.screens.FavouritesDestination
-import com.example.mobileappproject.ui.home.HomeDestination
+import com.example.mobileappproject.ui.screens.HomeDestination
 import com.example.mobileappproject.ui.registration.LogInDestination
 import com.example.mobileappproject.ui.screens.OrdersDestination
 import com.example.mobileappproject.ui.screens.ServicesDestination
 import com.example.mobileappproject.ui.registration.SignUpDestination
+import com.example.mobileappproject.viewmodels.UserViewModel
 
 
 @Composable
 fun AppDrawer(
-    isLoggedIn: Boolean,
-    userName: String? = null,
-    userEmail: String? = null,
-    navController: NavHostController, // Add NavController
-    drawerState: DrawerState, // Pass drawer state
-    content: @Composable () -> Unit // Content of the screen
+    userViewModel: UserViewModel,
+    navController: NavHostController,
+    drawerState: DrawerState,
+    content: @Composable () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+    val currentUser by userViewModel.currentUser.collectAsState()
 
     Box {
         // Drawer content
@@ -56,9 +59,15 @@ fun AppDrawer(
                 ) {
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Extract userName and userEmail from currentUser
+                    val userName = currentUser?.username
+                    val userEmail = currentUser?.email
+
                     // User Info
                     if (isLoggedIn) {
                         UserHeader(userName = userName, userEmail = userEmail)
+                    } else {
+                        UserHeader(userName = null, userEmail = null) // Show guest info
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -71,6 +80,7 @@ fun AppDrawer(
         )
     }
 }
+
 
 
 @Composable

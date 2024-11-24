@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.mobileappproject.data.converters.SubcategoryConverter
 import com.example.mobileappproject.data.dao.CategoryDao
 import com.example.mobileappproject.data.dao.FavouriteDao
 import com.example.mobileappproject.data.dao.OrderDao
@@ -17,6 +19,7 @@ import com.example.mobileappproject.data.entities.User
 
 
 @Database(entities = [Favourite::class, Order::class, Service::class, User::class, Category::class], version = 1, exportSchema = false)
+@TypeConverters(SubcategoryConverter::class)
 abstract class KaziHubDatabase : RoomDatabase() {
 
     abstract fun CategoryDao(): CategoryDao
