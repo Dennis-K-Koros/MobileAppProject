@@ -49,9 +49,15 @@ fun KaziHubNavHost(
             )
         }
         composable(route = CategoriesDestination.route){
+
+            val categoriesViewModel: CategoriesViewModel = viewModel()
+            val userViewModel: UserViewModel = viewModel()
+
             CategoriesScreen(
                 navController = navController,
-                onCategoryClick = { /* Handle Category Click */ },
+                userViewModel = userViewModel,
+                categoriesViewModel = categoriesViewModel,
+                onSubcategoryClick = { /* Handle Category Click */ },
             )
         }
         composable(route = FavouritesDestination.route){

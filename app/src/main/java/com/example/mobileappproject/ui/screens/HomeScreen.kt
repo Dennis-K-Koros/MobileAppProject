@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
 import com.example.mobileappproject.data.entities.Category
@@ -139,15 +140,15 @@ fun ServiceCategoryCarousel(category: String, services: List<Service>, modifier:
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(services) { service ->
-                ServiceCard(service)
+            items(services, key = { it.id }) { service ->
+                ServiceHomeCard(service)
             }
         }
     }
 }
 
 @Composable
-fun ServiceCard(service: Service, modifier: Modifier = Modifier) {
+fun ServiceHomeCard(service: Service, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .size(150.dp)
@@ -159,9 +160,15 @@ fun ServiceCard(service: Service, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(8.dp)
         ) {
-            service.image?.let {
+            if (service.image != null) {
+                AsyncImage(
+                    model = service.image,
+                    contentDescription = service.serviceName,
+                    modifier = Modifier.size(48.dp)
+                )
+            } else {
                 Icon(
-                    painter = painterResource(R.drawable.service_placeholder), // Replace with actual image handling
+                    painter = painterResource(R.drawable.service_placeholder),
                     contentDescription = service.serviceName,
                     modifier = Modifier.size(48.dp)
                 )
@@ -175,5 +182,6 @@ fun ServiceCard(service: Service, modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 

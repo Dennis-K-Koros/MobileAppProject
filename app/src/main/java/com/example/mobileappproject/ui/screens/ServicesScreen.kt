@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -25,11 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
 import com.example.mobileappproject.data.ServiceItem
+import com.example.mobileappproject.data.entities.Service
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
+import com.example.mobileappproject.viewmodels.ServiceViewModel
+import com.example.mobileappproject.viewmodels.UserViewModel
 import kotlinx.coroutines.launch
 
 object ServicesDestination : NavigationDestination {
@@ -40,19 +48,19 @@ object ServicesDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServicesScreen(
-    homeViewModel: HomeViewModel = HomeViewModel(),
+    userViewModel: UserViewModel,
+    serviceViewModel: ServiceViewModel,
     navController: NavHostController,
     onServiceClick: (String) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val groupedServices = homeViewModel.services.groupBy { it.category }
+
+    val services by serviceViewModel.services.collectAsState()
 
     AppDrawer(
-        isLoggedIn = true,
-        userName = stringResource(R.string.name),
-        userEmail = stringResource(R.string.email),
+        userViewModel = userViewModel,
         navController = navController,
         drawerState = drawerState
     ) {
@@ -85,13 +93,10 @@ fun ServicesScreen(
                 }
 
                 // Services List Grouped by Category
-                items(groupedServices.keys.toList()) { category ->
-                    val services = groupedServices[category].orEmpty()
-                    ServiceCarousel(
-                        category = category,
-                        services = services,
-                        onServiceClick = onServiceClick,
-                    )
+                services.groupBy { it.subcategory }.forEach { (subcategory, services) ->
+                    item {
+                        ServiceCarousel(category = subcategory, services = services)
+                    }
                 }
             }
         }
@@ -99,65 +104,58 @@ fun ServicesScreen(
 }
 
 
-
-
 @Composable
-fun ServiceCarousel(
-    category: String,
-    services: List<ServiceItem>, // Replace with your data class name
-    onServiceClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) {
-        // Category Title
+fun ServiceCarousel(category: String, services: List<Service>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(8.dp)) {
         Text(
             text = category,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(start = 16.dp)
         )
 
-        // Horizontal Row of Services
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(services) { service ->
-                ServiceCard(
-                    name = service.name,
-                    imageRes = service.imageRes, // Replace with correct field
-                    onClick = { onServiceClick(service.name) }
-                )
+                ServiceCard(service)
             }
         }
     }
 }
 
 @Composable
-fun ServiceCard(
-    name: String,
-    @DrawableRes imageRes: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
+fun ServiceCard(service: Service, modifier: Modifier = Modifier) {
+    Card(
         modifier = modifier
-            .width(120.dp)
-            .clickable { onClick() }
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .size(150.dp)
+            .clickable { /* Handle card click */ },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Icon(
-            painter = painterResource(imageRes),
-            contentDescription = name,
-            modifier = Modifier.size(64.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(4.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            if (service.image != null) {
+                AsyncImage(
+                    model = service.image,
+                    contentDescription = service.serviceName,
+                    modifier = Modifier.size(48.dp)
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.service_placeholder),
+                    contentDescription = service.serviceName,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = service.serviceName,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
