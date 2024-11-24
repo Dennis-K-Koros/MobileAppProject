@@ -6,14 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.mobileappproject.data.entities.Category
 import com.example.mobileappproject.data.entities.Order
 import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface OrderDao {
-    @@Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(order: Order)
 
     @Update
