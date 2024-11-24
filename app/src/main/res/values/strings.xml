@@ -28,4 +28,5 @@
     <string name="password">Password</string>
     <string name="conf">Confirm Password</string>
     <string name="register">Register</string>
+    <string name="no_services">No Services</string>
 </resources>

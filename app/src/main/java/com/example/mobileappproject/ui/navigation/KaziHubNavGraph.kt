@@ -2,11 +2,13 @@ package com.example.mobileappproject.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mobileappproject.data.repositories.CategoryRepository
+import com.example.mobileappproject.data.AppDataContainer
+import com.example.mobileappproject.data.repositories.UserRepository
 import com.example.mobileappproject.ui.screens.CategoriesDestination
 import com.example.mobileappproject.ui.screens.FavouritesDestination
 import com.example.mobileappproject.ui.screens.HomeDestination
@@ -21,8 +23,11 @@ import com.example.mobileappproject.ui.screens.FavoritesScreen
 import com.example.mobileappproject.ui.screens.OrdersScreen
 import com.example.mobileappproject.ui.screens.ServicesScreen
 import com.example.mobileappproject.viewmodels.CategoriesViewModel
+import com.example.mobileappproject.viewmodels.CategoriesViewModelFactory
 import com.example.mobileappproject.viewmodels.ServiceViewModel
+import com.example.mobileappproject.viewmodels.ServiceViewModelFactory
 import com.example.mobileappproject.viewmodels.UserViewModel
+import com.example.mobileappproject.viewmodels.UserViewModelFactory
 
 
 @Composable
@@ -30,6 +35,12 @@ fun KaziHubNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ){
+
+//    val appContainer = (LocalContext.current.applicationContext as? KaziHubApplication)?.container
+//        ?: throw IllegalStateException("Application is not KaziHubApplication")
+     val appContainer = AppDataContainer(LocalContext.current)
+
+
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
@@ -37,9 +48,9 @@ fun KaziHubNavHost(
     ){
         composable(route = HomeDestination.route){
 
-            val userViewModel: UserViewModel = viewModel()
-            val serviceViewModel: ServiceViewModel = viewModel()
-            val categoriesViewModel: CategoriesViewModel = viewModel()
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+            val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModelFactory(appContainer.serviceRepository))
+            val categoriesViewModel: CategoriesViewModel = viewModel(factory = CategoriesViewModelFactory(appContainer.categoryRepository))
 
             HomeScreen(
                 navController = navController,
@@ -50,8 +61,8 @@ fun KaziHubNavHost(
         }
         composable(route = CategoriesDestination.route){
 
-            val categoriesViewModel: CategoriesViewModel = viewModel()
-            val userViewModel: UserViewModel = viewModel()
+            val categoriesViewModel: CategoriesViewModel = viewModel(factory = CategoriesViewModelFactory(appContainer.categoryRepository))
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
 
             CategoriesScreen(
                 navController = navController,
@@ -61,14 +72,18 @@ fun KaziHubNavHost(
             )
         }
         composable(route = FavouritesDestination.route){
+
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+
             FavoritesScreen(
                 navController = navController,
+                userViewModel = userViewModel
             )
         }
         composable(route = ServicesDestination.route){
 
-            val userViewModel: UserViewModel = viewModel()
-            val serviceViewModel: ServiceViewModel = viewModel()
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+            val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModelFactory(appContainer.serviceRepository))
 
             ServicesScreen(
                 navController = navController,
@@ -77,8 +92,12 @@ fun KaziHubNavHost(
             )
         }
         composable(route = OrdersDestination.route){
+
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+
             OrdersScreen(
                 navController = navController,
+                userViewModel = userViewModel
             )
         }
         composable(route = SignUpDestination.route){

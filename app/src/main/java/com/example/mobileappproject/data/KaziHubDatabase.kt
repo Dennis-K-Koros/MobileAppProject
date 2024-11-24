@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.mobileappproject.data.converters.DateConverter
 import com.example.mobileappproject.data.converters.SubcategoryConverter
 import com.example.mobileappproject.data.dao.CategoryDao
 import com.example.mobileappproject.data.dao.FavouriteDao
@@ -18,8 +19,8 @@ import com.example.mobileappproject.data.entities.Service
 import com.example.mobileappproject.data.entities.User
 
 
-@Database(entities = [Favourite::class, Order::class, Service::class, User::class, Category::class], version = 1, exportSchema = false)
-@TypeConverters(SubcategoryConverter::class)
+@Database(entities = [Favourite::class, Order::class, Service::class, User::class, Category::class], version = 4, exportSchema = false)
+@TypeConverters(SubcategoryConverter::class,DateConverter::class)
 abstract class KaziHubDatabase : RoomDatabase() {
 
     abstract fun CategoryDao(): CategoryDao
@@ -35,9 +36,11 @@ abstract class KaziHubDatabase : RoomDatabase() {
         fun getDatabase(context: Context): KaziHubDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, KaziHubDatabase::class.java, "KaziHubDatabase")
+                Room.databaseBuilder(context.applicationContext, KaziHubDatabase::class.java, "KaziHubDatabase")
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
+
             }
         }
     }

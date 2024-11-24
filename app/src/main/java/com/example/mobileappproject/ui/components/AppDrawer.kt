@@ -59,15 +59,17 @@ fun AppDrawer(
                 ) {
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Extract userName and userEmail from currentUser
-                    val userName = currentUser?.username
-                    val userEmail = currentUser?.email
-
                     // User Info
                     if (isLoggedIn) {
+                        // If logged in, display user details
+                        val userName = currentUser?.username
+                        val userEmail = currentUser?.email
                         UserHeader(userName = userName, userEmail = userEmail)
                     } else {
+                        // If not logged in, show login and signup buttons
                         UserHeader(userName = null, userEmail = null) // Show guest info
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LoginSignupButtons(navController = navController)
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -81,7 +83,32 @@ fun AppDrawer(
     }
 }
 
+@Composable
+fun LoginSignupButtons(navController: NavHostController) {
+    // Login Button
+    Button(
+        onClick = {
+            navController.navigate(LogInDestination.route)
+        },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+    ) {
+        Text(text = "Login", color = MaterialTheme.colorScheme.onPrimary)
+    }
 
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Signup Button
+    Button(
+        onClick = {
+            navController.navigate(SignUpDestination.route)
+        },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+    ) {
+        Text(text = "Sign Up", color = MaterialTheme.colorScheme.onPrimary)
+    }
+}
 
 @Composable
 fun DrawerItems(navController: NavHostController, isLoggedIn: Boolean) {
@@ -118,7 +145,7 @@ fun DrawerItems(navController: NavHostController, isLoggedIn: Boolean) {
                     "Orders" -> OrdersDestination.route
                     "Favourites" -> FavouritesDestination.route
                     "Profile" -> {
-                        if (isLoggedIn) LogInDestination.route else SignUpDestination.route
+                        if (isLoggedIn) HomeDestination.route else LogInDestination.route
                     }
                     else -> HomeDestination.route
                 }
@@ -147,12 +174,13 @@ fun DrawerItems(navController: NavHostController, isLoggedIn: Boolean) {
             },
             selected = false,
             onClick = {
-                // Navigate to Login Screen or handle logout logic
+                // Handle logout logic, navigate to Login screen if necessary
                 navController.navigate(LogInDestination.route)
             }
         )
     }
 }
+
 
 
 

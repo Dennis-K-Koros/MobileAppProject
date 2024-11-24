@@ -12,6 +12,6 @@ data class Favourite (
     @PrimaryKey(autoGenerate = true) val id: Int = 0, // Auto-generates the ID
     val userId: String,
     val serviceId: String,
-    @TypeConverters(DateConverter::class) val createdAt: Date,
-    @TypeConverters(DateConverter::class) val updatedAt: Date
+    val createdAt: Date,
+    val updatedAt: Date
 )

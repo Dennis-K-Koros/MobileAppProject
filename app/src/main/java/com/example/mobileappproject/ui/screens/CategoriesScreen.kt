@@ -1,5 +1,6 @@
 package com.example.mobileappproject.ui.screens
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
-import com.example.mobileappproject.data.entities.Category
+import com.example.mobileappproject.data.entities.Subcategory
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
 import com.example.mobileappproject.viewmodels.CategoriesViewModel
@@ -47,6 +49,14 @@ fun CategoriesScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val categories by categoriesViewModel.categories.collectAsState()
+    val isLoadingCategories by categoriesViewModel.isLoading.collectAsState()
+    LaunchedEffect(Unit) {
+        categoriesViewModel.fetchCategoriesFromApi()
+        categoriesViewModel.categories.collect { data ->
+            Log.d("CategoriesData", data.toString())
+        }
+    }
+
     val groupedCategories = categories.groupBy { it.name }
 
     AppDrawer(
@@ -71,35 +81,54 @@ fun CategoriesScreen(
                 )
             }
         ) { innerPadding ->
+            val groupedCategories = categories.groupBy { it.name }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 8.dp)
             ) {
-                groupedCategories.forEach { (categoryName, categories) -> // Grouped by category name
+                if (isLoadingCategories) {
                     item {
-                        Text(
-                            text = categoryName,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
                     }
-                    item {
-                        SubcategoriesGrid(
-                            subcategories = categories.flatMap { it.subcategories }, // Extract subcategories
-                            onSubcategoryClick = onSubcategoryClick
-                        )
+                } else {
+                    groupedCategories.forEach { (categoryName, categories) ->
+                        item {
+                            Text(
+                                text = categoryName,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                        item{
+                            Box(modifier = Modifier.height(200.dp)){
+                                val allSubcategories = categories
+                                    .flatMap { it.subcategories.split(",") } // Split subcategories string into a list
+                                    .map { name -> Subcategory(name = name.trim(), id = "") } // Create Subcategory objects for UI
+                                SubcategoriesGrid(
+                                    subcategories = allSubcategories,
+                                    onSubcategoryClick = onSubcategoryClick
+                                )
+                            }
+                        }
                     }
+
                 }
             }
+
         }
     }
 }
 
 @Composable
 fun SubcategoriesGrid(
-    subcategories: List<String>, // Use List<String> to represent subcategory names
+    subcategories: List<Subcategory>, //
     onSubcategoryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -110,15 +139,16 @@ fun SubcategoriesGrid(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        items(subcategories) { subcategoryName -> // This now works with List<String>
+        items(subcategories) { subcategory ->
             SubcategoryCard(
-                name = subcategoryName,
-                imageRes = R.drawable.service_placeholder, // Replace with your actual image
-                onClick = { onSubcategoryClick(subcategoryName) }
+                name = subcategory.name, // Assuming name exists in Subcategory
+                imageRes = R.drawable.service_placeholder, // Placeholder image
+                onClick = { onSubcategoryClick(subcategory.name) } // Handle click by passing name
             )
         }
     }
 }
+
 
 
 @Composable

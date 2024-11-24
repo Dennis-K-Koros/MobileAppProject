@@ -26,6 +26,7 @@ import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
+import com.example.mobileappproject.viewmodels.UserViewModel
 import kotlinx.coroutines.launch
 
 
@@ -38,6 +39,7 @@ object FavouritesDestination : NavigationDestination {
 @Composable
 fun FavoritesScreen(
     navController: NavHostController,
+    userViewModel: UserViewModel,
 ) {
     val tabs = listOf("Services", "Products")
     val selectedIndex = remember { mutableStateOf(0) }
@@ -46,10 +48,8 @@ fun FavoritesScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     AppDrawer(
-        isLoggedIn = true,
-        userName = stringResource(R.string.name),
-        userEmail = stringResource(R.string.email),
         navController = navController,
+        userViewModel = userViewModel,
         drawerState = drawerState // Pass drawer state
     ){
         Scaffold (

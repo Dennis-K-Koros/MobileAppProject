@@ -1,5 +1,6 @@
 package com.example.mobileappproject.data.repositories
 
+import com.example.mobileappproject.data.entities.CategoriesResponse
 import com.example.mobileappproject.data.entities.Category
 import kotlinx.coroutines.flow.Flow
 

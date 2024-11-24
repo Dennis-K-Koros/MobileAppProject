@@ -36,7 +36,7 @@ object HomeDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    serviceViewModel: ServiceViewModel, // Inject ViewModel instances
+    serviceViewModel: ServiceViewModel,
     categoriesViewModel: CategoriesViewModel,
     userViewModel: UserViewModel,
     navController: NavHostController,
@@ -46,9 +46,18 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    // Fetch Data from the API
+    LaunchedEffect(Unit) {
+        categoriesViewModel.fetchCategoriesFromApi()
+        serviceViewModel.fetchServices()
+    }
+
     // Collect data from ViewModels
     val services by serviceViewModel.services.collectAsState()
     val categories by categoriesViewModel.categories.collectAsState()
+
+    val isLoadingCategories by categoriesViewModel.isLoading.collectAsState()
+    val isLoadingServices by serviceViewModel.isLoading.collectAsState()
 
     AppDrawer(
         userViewModel = userViewModel,
@@ -75,26 +84,38 @@ fun HomeScreen(
                     .fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // Search Bar Section
-                item {
-                    SearchBar(modifier = Modifier.padding(horizontal = 16.dp))
-                }
-
-                // Categories Carousel Section
-                item {
-                    CategoryCarousel(categories = categories)
-                }
-
-                // Service List Section
-                services.groupBy { it.subcategory }.forEach { (subcategory, services) ->
+                // Show loading indicator while data is loading
+                if (isLoadingCategories || isLoadingServices) {
                     item {
-                        ServiceCategoryCarousel(category = subcategory, services = services)
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                    }
+                } else {
+                    // Search Bar Section
+                    item {
+                        SearchBar(modifier = Modifier.padding(horizontal = 16.dp))
+                    }
+
+                    // Categories Carousel Section
+                    item {
+                        CategoryCarousel(categories = categories)
+                    }
+
+                    // Service List Section
+                    services.groupBy { it.subcategory }.forEach { (subcategory, services) ->
+                        item {
+                            ServiceCategoryCarousel(category = subcategory, services = services)
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun SearchBar(modifier: Modifier = Modifier) {
@@ -136,16 +157,25 @@ fun ServiceCategoryCarousel(category: String, services: List<Service>, modifier:
             modifier = Modifier.padding(start = 16.dp)
         )
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(services, key = { it.id }) { service ->
-                ServiceHomeCard(service)
+        if (services.isNotEmpty()) {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(services, key = { "${category}_${it.id}_${it.hashCode()}" }) { service ->
+                    ServiceHomeCard(service)
+                }
             }
+        } else {
+            Text(
+                text = stringResource(R.string.no_services),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
+
 
 @Composable
 fun ServiceHomeCard(service: Service, modifier: Modifier = Modifier) {

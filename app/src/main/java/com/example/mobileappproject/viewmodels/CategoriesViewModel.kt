@@ -1,5 +1,6 @@
 package com.example.mobileappproject.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobileappproject.data.entities.Category
@@ -7,12 +8,14 @@ import com.example.mobileappproject.data.repositories.CategoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.State
 
 class CategoriesViewModel(private val repository: CategoryRepository) : ViewModel() {
 
     // StateFlow to observe the list of categories
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> get() = _categories
+
 
     // StateFlow to observe a single category (e.g., for details)
     private val _selectedCategory = MutableStateFlow<Category?>(null)
@@ -22,6 +25,9 @@ class CategoriesViewModel(private val repository: CategoryRepository) : ViewMode
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
+
     init {
         // Load categories from the local database on initialization
         loadCategories()
@@ -30,11 +36,14 @@ class CategoriesViewModel(private val repository: CategoryRepository) : ViewMode
     // Fetch categories from the API and update the database
     fun fetchCategoriesFromApi() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val categoriesFromApi = repository.fetchCategoriesFromApi()
                 _categories.value = categoriesFromApi
             } catch (e: Exception) {
                 _errorMessage.value = "Error fetching categories: ${e.message}"
+            }finally {
+                _isLoading.value = false
             }
         }
     }

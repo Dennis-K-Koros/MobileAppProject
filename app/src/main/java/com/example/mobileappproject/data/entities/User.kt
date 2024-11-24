@@ -2,13 +2,10 @@ package com.example.mobileappproject.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.example.mobileappproject.data.converters.DateConverter
-import java.util.Date
 
 @Entity(tableName = "User")
 data class User(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0, // Auto-generates the ID
+    @PrimaryKey val id: String, // Provided by the backend
     val username: String,
     val email: String,
     val phone: String,
@@ -17,11 +14,26 @@ data class User(
     val isTechnician: Boolean = false, // Defaults to false
     val image: String? = null,         // Nullable if no image is provided
     val verified: Boolean = false,     // Changed to Boolean for clarity
-    @TypeConverters(DateConverter::class) val createdAt: Date,
-    @TypeConverters(DateConverter::class) val updatedAt: Date
+    val createdAt: String,
+    val updatedAt: String
 )
+
 
 data class LoginRequest(
     val email: String,
     val password: String
+)
+
+data class UserModel(
+    val _id: String,
+    val username: String,
+    val email: String,
+    val phone: String,
+    val password: String,
+    val role: String,
+    val isTechnician: Boolean,
+    val verified: Boolean,
+    val createdAt: String,
+    val updatedAt: String,
+    val __v: Int
 )

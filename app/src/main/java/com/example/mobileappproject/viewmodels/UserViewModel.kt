@@ -19,7 +19,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     fun login(email: String, password: String) {
         viewModelScope.launch {
             val user = repository.loginUser(email, password)
-            _currentUser.value = user
+            _currentUser.value = user // Assign User entity directly
             _isLoggedIn.value = user != null
         }
     }
@@ -27,10 +27,11 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     fun signup(user: User) {
         viewModelScope.launch {
             val newUser = repository.signupUser(user)
-            _currentUser.value = newUser
+            _currentUser.value = newUser // Assign User entity directly
             _isLoggedIn.value = newUser != null
         }
     }
+
 
     fun logout() {
         _currentUser.value = null
