@@ -66,9 +66,14 @@ fun KaziHubNavHost(
             )
         }
         composable(route = ServicesDestination.route){
+
+            val userViewModel: UserViewModel = viewModel()
+            val serviceViewModel: ServiceViewModel = viewModel()
+
             ServicesScreen(
                 navController = navController,
-                onServiceClick = { /* Handle Service Click */ },
+                userViewModel = userViewModel,
+                serviceViewModel = serviceViewModel
             )
         }
         composable(route = OrdersDestination.route){

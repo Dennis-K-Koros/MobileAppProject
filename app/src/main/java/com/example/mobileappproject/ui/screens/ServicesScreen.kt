@@ -51,7 +51,6 @@ fun ServicesScreen(
     userViewModel: UserViewModel,
     serviceViewModel: ServiceViewModel,
     navController: NavHostController,
-    onServiceClick: (String) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
