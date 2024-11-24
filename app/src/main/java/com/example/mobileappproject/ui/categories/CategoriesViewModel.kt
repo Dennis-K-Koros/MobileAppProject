@@ -1,19 +1,23 @@
 package com.example.mobileappproject.ui.categories
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.mobileappproject.R
-import com.example.mobileappproject.data.CategoryItem
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.mobileappproject.data.entities.Category
+import com.example.mobileappproject.data.repositories.CategoryRepository
+import kotlinx.coroutines.launch
 
-class CategoriesViewModel : ViewModel() {
-    val categories = listOf(
-        CategoryItem(1, "Motor Vehicle Mechanic", "Automotive", R.drawable.landingscreen),
-        CategoryItem(2, "Body works", "Automotive", R.drawable.landingscreen),
-        CategoryItem(3, "Home Cleaning", "Cleaning", R.drawable.landingscreen),
-        CategoryItem(4, "Plumbing", "Construction", R.drawable.landingscreen),
-        CategoryItem(5, "Painting", "Construction", R.drawable.landingscreen),
-        CategoryItem(6, "Word working", "Construction", R.drawable.landingscreen),
-        CategoryItem(7, "Flooring", "Construction", R.drawable.landingscreen),
-        CategoryItem(8, "Skin Aesthetics", "Beauty", R.drawable.landingscreen),
-        CategoryItem(9, "Makeup", "Beauty", R.drawable.landingscreen)
-    )
+class CategoryViewModel(
+    private val repository: CategoryRepository
+) : ViewModel() {
+    val categories: LiveData<List<Category>> = repository.getAllCategoryStream().asLiveData()
+
+    fun fetchCategoriesFromApi() = viewModelScope.launch {
+        repository.fetchCategoriesFromApi()
+    }
+
+    fun addCategory(category: Category) = viewModelScope.launch {
+        repository.insertCategory(category)
+    }
 }

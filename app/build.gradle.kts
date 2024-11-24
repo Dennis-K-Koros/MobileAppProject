@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
 android {
@@ -59,8 +60,23 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    
+
+    //navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
+
+    //Room
+    implementation("androidx.room:room-runtime:2.5.0")
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    ksp("androidx.room:room-compiler:2.5.0")
+    implementation("androidx.room:room-ktx:2.5.0")
+
+    // Gson for JSON serialization/deserialization
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
