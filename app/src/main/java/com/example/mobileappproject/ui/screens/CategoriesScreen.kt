@@ -2,12 +2,12 @@ package com.example.mobileappproject.ui.screens
 
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +72,9 @@ fun CategoriesScreen(
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },
-                    onCartClick = { /* Handle Cart Click */ },
+                    onCartClick = {
+                        navController.navigate("shoppingCart")
+                    },
                     onMenuClick = {
                         coroutineScope.launch {
                             drawerState.open()
@@ -81,8 +83,6 @@ fun CategoriesScreen(
                 )
             }
         ) { innerPadding ->
-            val groupedCategories = categories.groupBy { it.name }
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -106,48 +106,46 @@ fun CategoriesScreen(
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
                         }
-                        item{
-                            Box(modifier = Modifier.height(200.dp)){
-                                val allSubcategories = categories
-                                    .flatMap { it.subcategories.split(",") } // Split subcategories string into a list
-                                    .map { name -> Subcategory(name = name.trim(), id = "") } // Create Subcategory objects for UI
-                                SubcategoriesGrid(
-                                    subcategories = allSubcategories,
-                                    onSubcategoryClick = onSubcategoryClick
-                                )
-                            }
+                        item {
+                            val allSubcategories = categories
+                                .flatMap { it.subcategories.split(",") } // Split subcategories string into a list
+                                .map { name -> Subcategory(name = name.trim(), id = "") } // Create Subcategory objects for UI
+
+                            SubcategoriesCarousel(
+                                subcategories = allSubcategories,
+                                onSubcategoryClick = onSubcategoryClick
+                            )
                         }
                     }
-
                 }
             }
-
         }
     }
 }
 
+
 @Composable
-fun SubcategoriesGrid(
-    subcategories: List<Subcategory>, //
+fun SubcategoriesCarousel(
+    subcategories: List<Subcategory>,
     onSubcategoryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // 2 columns for a grid layout
-        contentPadding = PaddingValues(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 25.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         items(subcategories) { subcategory ->
             SubcategoryCard(
-                name = subcategory.name, // Assuming name exists in Subcategory
+                name = subcategory.name ?: "Unknown", // Ensure `name` is not null
                 imageRes = R.drawable.service_placeholder, // Placeholder image
-                onClick = { onSubcategoryClick(subcategory.name) } // Handle click by passing name
+                onClick = { onSubcategoryClick(subcategory.name ?: "Unknown") } // Handle null values gracefully
             )
         }
     }
 }
+
+
 
 
 
@@ -170,7 +168,7 @@ fun SubcategoryCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(8.dp)
         ) {
-            Icon(
+            Image(
                 painter = painterResource(imageRes),
                 contentDescription = name,
                 modifier = Modifier.size(48.dp)

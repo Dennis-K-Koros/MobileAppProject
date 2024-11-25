@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mobileappproject.data.AppDataContainer
-import com.example.mobileappproject.data.repositories.UserRepository
 import com.example.mobileappproject.ui.screens.CategoriesDestination
 import com.example.mobileappproject.ui.screens.FavouritesDestination
 import com.example.mobileappproject.ui.screens.HomeDestination
@@ -16,7 +15,6 @@ import com.example.mobileappproject.ui.screens.HomeScreen
 import com.example.mobileappproject.ui.registration.LogInDestination
 import com.example.mobileappproject.ui.registration.LoginScreen
 import com.example.mobileappproject.ui.screens.OrdersDestination
-import com.example.mobileappproject.ui.registration.ResetPasswordDestination
 import com.example.mobileappproject.ui.screens.ServicesDestination
 import com.example.mobileappproject.ui.registration.SignUpDestination
 import com.example.mobileappproject.ui.registration.SignUpScreen

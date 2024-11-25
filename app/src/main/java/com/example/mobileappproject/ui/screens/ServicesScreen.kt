@@ -3,6 +3,7 @@ package com.example.mobileappproject.ui.screens
 
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
@@ -35,7 +36,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mobileappproject.KaziHubTopAppBar
 import com.example.mobileappproject.R
-import com.example.mobileappproject.data.ServiceItem
 import com.example.mobileappproject.data.entities.Service
 import com.example.mobileappproject.ui.components.AppDrawer
 import com.example.mobileappproject.ui.navigation.NavigationDestination
@@ -82,7 +82,9 @@ fun ServicesScreen(
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },
-                    onCartClick = { /* Handle Cart Click */ },
+                    onCartClick = {
+                        navController.navigate("shoppingCart")
+                    },
                     onMenuClick = {
                         coroutineScope.launch { drawerState.open() }
                     }
@@ -159,13 +161,13 @@ fun ServicesScreen(
                     AsyncImage(
                         model = service.image,
                         contentDescription = service.serviceName,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(100.dp)
                     )
                 } else {
-                    Icon(
+                    Image(
                         painter = painterResource(R.drawable.service_placeholder),
                         contentDescription = service.serviceName,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(100.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))

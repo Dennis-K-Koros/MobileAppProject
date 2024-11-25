@@ -58,7 +58,9 @@ fun OrdersScreen(
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },
-                    onCartClick = { /* Handle Cart Click */ },
+                    onCartClick = {
+                        navController.navigate("shoppingCart")
+                    },
                     onMenuClick = {
                         coroutineScope.launch { drawerState.open() }
                     }

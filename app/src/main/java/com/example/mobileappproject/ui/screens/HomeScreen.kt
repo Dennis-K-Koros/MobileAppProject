@@ -1,5 +1,7 @@
 package com.example.mobileappproject.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -164,8 +166,8 @@ fun ServiceCategoryCarousel(category: String, services: List<Service>, modifier:
 
         if (services.isNotEmpty()) {
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 items(services, key = { "${category}_${it.id}_${it.hashCode()}" }) { service ->
                     ServiceHomeCard(service)
@@ -186,26 +188,26 @@ fun ServiceCategoryCarousel(category: String, services: List<Service>, modifier:
 fun ServiceHomeCard(service: Service, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .size(150.dp)
+            .size(170.dp)
             .clickable { /* Handle card click */ },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(15.dp)
         ) {
             if (service.image != null) {
                 AsyncImage(
                     model = service.image,
                     contentDescription = service.serviceName,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(100.dp)
                 )
             } else {
-                Icon(
+                Image(
                     painter = painterResource(R.drawable.service_placeholder),
                     contentDescription = service.serviceName,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(100.dp)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
