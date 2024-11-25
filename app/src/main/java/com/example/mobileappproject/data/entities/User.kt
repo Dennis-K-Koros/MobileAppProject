@@ -24,6 +24,13 @@ data class LoginRequest(
     val password: String
 )
 
+data class SignupRequest(
+    val username: String,
+    val email: String,
+    val phone: String,
+    val password: String
+)
+
 data class UserModel(
     val _id: String,
     val username: String,
@@ -37,3 +44,10 @@ data class UserModel(
     val updatedAt: String,
     val __v: Int
 )
+
+data class ApiResponse(
+    val status: String,
+    val message: String,
+    val data: List<UserModel>
+)
+

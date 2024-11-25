@@ -1,8 +1,10 @@
 package com.example.mobileappproject.data.apiRepositories
 
+import android.util.Log
 import com.example.mobileappproject.data.api.UserApi
 import com.example.mobileappproject.data.dao.UserDao
 import com.example.mobileappproject.data.entities.LoginRequest
+import com.example.mobileappproject.data.entities.SignupRequest
 import com.example.mobileappproject.data.entities.User
 import com.example.mobileappproject.data.entities.UserModel
 import com.example.mobileappproject.data.repositories.UserRepository
@@ -14,7 +16,15 @@ class ApiUserRepository(
 ) : UserRepository {
 
     // Fetch user by ID and observe changes using Flow
-    override fun getUserStream(userId: String): Flow<User?> = userDao.getUser(userId)
+    override suspend fun getUserStream(userId: String): Flow<User> {
+        Log.d("UserRepository", "Fetching user stream for userId: $userId")
+        return userDao.getUser(userId).also {
+            it.collect { user ->
+                Log.d("UserRepository", "User fetched: $user")
+            }
+        }
+    }
+
 
     // Insert a user into the database
     override suspend fun insertUser(user: User) = userDao.insert(user)
@@ -28,7 +38,7 @@ class ApiUserRepository(
     // Convert UserModel to User
     private fun mapToUserEntity(userModel: UserModel): User {
         return User(
-            id = userModel._id, // Assuming _id is the unique identifier
+            id = userModel._id ?: throw IllegalArgumentException("User ID cannot be null"),
             username = userModel.username,
             email = userModel.email,
             phone = userModel.phone,
@@ -36,10 +46,11 @@ class ApiUserRepository(
             role = userModel.role,
             isTechnician = userModel.isTechnician,
             verified = userModel.verified,
-            createdAt = userModel.createdAt, // You might need to parse this if it's a String
-            updatedAt = userModel.updatedAt // You might need to parse this if it's a String
+            createdAt = userModel.createdAt,
+            updatedAt = userModel.updatedAt
         )
     }
+
 
     // Fetch user profile from API and store it locally if successful
     override suspend fun fetchUserFromApi(userId: String): UserModel? {
@@ -66,7 +77,8 @@ class ApiUserRepository(
         return try {
             val response = api.signIn(LoginRequest(email = email, password = password))
             if (response.isSuccessful) {
-                response.body()?.let { userModel ->
+                val apiResponse = response.body()
+                apiResponse?.data?.firstOrNull()?.let { userModel ->
                     val userEntity = mapToUserEntity(userModel) // Convert to User entity
                     userDao.insert(userEntity) // Cache the user locally
                     userEntity // Return the User entity
@@ -81,14 +93,22 @@ class ApiUserRepository(
         }
     }
 
+
     override suspend fun signupUser(user: User): User? {
+        val signupRequest = SignupRequest(
+            username = user.username,
+            email = user.email,
+            phone = user.phone,
+            password = user.password
+        )
+
         return try {
-            val response = api.signUp(user)
+            val response = api.signUp(signupRequest)
             if (response.isSuccessful) {
                 response.body()?.let { userModel ->
-                    val userEntity = mapToUserEntity(userModel) // Convert to User entity
+                    val userEntity = mapToUserEntity(userModel)
                     userDao.insert(userEntity) // Cache the new user locally
-                    userEntity // Return the User entity
+                    userEntity
                 }
             } else {
                 println("Error during signup: ${response.message()}")
@@ -99,5 +119,6 @@ class ApiUserRepository(
             null
         }
     }
+
 }
 

@@ -46,6 +46,9 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+    val currentUser by userViewModel.currentUser.collectAsState()
+
     // Fetch Data from the API
     LaunchedEffect(Unit) {
         categoriesViewModel.fetchCategoriesFromApi()
@@ -71,7 +74,9 @@ fun HomeScreen(
                     title = stringResource(R.string.app_name),
                     canNavigateBack = false,
                     scrollBehavior = scrollBehavior,
-                    onCartClick = { /* Handle Cart Click */ },
+                    onCartClick = {
+                        navController.navigate("shoppingCart")
+                    },
                     onMenuClick = {
                         coroutineScope.launch { drawerState.open() }
                     }

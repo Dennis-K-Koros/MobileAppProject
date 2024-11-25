@@ -1,6 +1,8 @@
 package com.example.mobileappproject.data.api
 
+import com.example.mobileappproject.data.entities.ApiResponse
 import com.example.mobileappproject.data.entities.LoginRequest
+import com.example.mobileappproject.data.entities.SignupRequest
 import com.example.mobileappproject.data.entities.User
 import com.example.mobileappproject.data.entities.UserModel
 import retrofit2.Response
@@ -16,10 +18,10 @@ interface UserApi {
     suspend fun getUserProfile(@Path("id") id: String): Response<UserModel>
 
     @POST("/user/signup")
-    suspend fun signUp(@Body user: User): Response<UserModel>
+    suspend fun signUp(@Body user: SignupRequest): Response<UserModel>
 
     @POST("/user/signin")
-    suspend fun signIn(@Body user: LoginRequest): Response<UserModel>
+    suspend fun signIn(@Body user: LoginRequest): Response<ApiResponse>
 
     @POST("/user/resendVerificationLink")
     suspend fun resendVerificationLink(@Body user: User): Response<UserModel>

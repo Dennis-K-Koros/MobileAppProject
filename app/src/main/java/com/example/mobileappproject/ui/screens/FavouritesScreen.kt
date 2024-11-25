@@ -56,7 +56,7 @@ fun FavoritesScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 KaziHubTopAppBar(
-                    title = stringResource(R.string.app_name),
+                    title = stringResource(R.string.favourites),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },

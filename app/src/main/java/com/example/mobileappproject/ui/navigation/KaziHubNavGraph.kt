@@ -14,14 +14,20 @@ import com.example.mobileappproject.ui.screens.FavouritesDestination
 import com.example.mobileappproject.ui.screens.HomeDestination
 import com.example.mobileappproject.ui.screens.HomeScreen
 import com.example.mobileappproject.ui.registration.LogInDestination
+import com.example.mobileappproject.ui.registration.LoginScreen
 import com.example.mobileappproject.ui.screens.OrdersDestination
 import com.example.mobileappproject.ui.registration.ResetPasswordDestination
 import com.example.mobileappproject.ui.screens.ServicesDestination
 import com.example.mobileappproject.ui.registration.SignUpDestination
+import com.example.mobileappproject.ui.registration.SignUpScreen
 import com.example.mobileappproject.ui.screens.CategoriesScreen
 import com.example.mobileappproject.ui.screens.FavoritesScreen
 import com.example.mobileappproject.ui.screens.OrdersScreen
+import com.example.mobileappproject.ui.screens.ProfileDestination
+import com.example.mobileappproject.ui.screens.ProfileScreen
 import com.example.mobileappproject.ui.screens.ServicesScreen
+import com.example.mobileappproject.ui.screens.ShoppingCartDestination
+import com.example.mobileappproject.ui.screens.ShoppingCartScreen
 import com.example.mobileappproject.viewmodels.CategoriesViewModel
 import com.example.mobileappproject.viewmodels.CategoriesViewModelFactory
 import com.example.mobileappproject.viewmodels.ServiceViewModel
@@ -36,8 +42,7 @@ fun KaziHubNavHost(
     modifier: Modifier = Modifier,
 ){
 
-//    val appContainer = (LocalContext.current.applicationContext as? KaziHubApplication)?.container
-//        ?: throw IllegalStateException("Application is not KaziHubApplication")
+
      val appContainer = AppDataContainer(LocalContext.current)
 
 
@@ -102,12 +107,40 @@ fun KaziHubNavHost(
         }
         composable(route = SignUpDestination.route){
 
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+
+            SignUpScreen(
+                navController = navController,
+                userViewModel = userViewModel
+            )
+
         }
         composable(route = LogInDestination.route){
 
-        }
-        composable(route = ResetPasswordDestination.route){
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
 
+            LoginScreen(
+                navController = navController,
+                onForgotPasswordClick = { /* Handle forgot password */ },
+                userViewModel = userViewModel
+            )
+
+        }
+        composable(route = ProfileDestination.route){
+
+            val userViewModel : UserViewModel = viewModel(factory = UserViewModelFactory(appContainer.userRepository))
+
+            ProfileScreen(
+                navController = navController,
+                userViewModel = userViewModel
+            )
+
+        }
+        composable(route = ShoppingCartDestination.route){
+
+            ShoppingCartScreen(
+                navController = navController,
+            )
         }
     }
 }

@@ -5,7 +5,7 @@ import com.example.mobileappproject.data.entities.UserModel
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getUserStream(userId: String): Flow<User?>
+    suspend fun getUserStream(userId: String): Flow<User?>
     suspend fun insertUser(user: User)
     suspend fun deleteUser(user: User)
     suspend fun updateUser(user: User)

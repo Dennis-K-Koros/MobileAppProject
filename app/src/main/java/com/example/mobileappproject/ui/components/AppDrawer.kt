@@ -1,5 +1,6 @@
 package com.example.mobileappproject.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import com.example.mobileappproject.ui.registration.LogInDestination
 import com.example.mobileappproject.ui.screens.OrdersDestination
 import com.example.mobileappproject.ui.screens.ServicesDestination
 import com.example.mobileappproject.ui.registration.SignUpDestination
+import com.example.mobileappproject.ui.screens.ProfileDestination
 import com.example.mobileappproject.viewmodels.UserViewModel
 
 
@@ -41,6 +43,8 @@ fun AppDrawer(
     val coroutineScope = rememberCoroutineScope()
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val currentUser by userViewModel.currentUser.collectAsState()
+
+    Log.d("AppDrawer", "Recomposed: isLoggedIn: $isLoggedIn, currentUser: $currentUser")
 
     Box {
         // Drawer content
@@ -64,10 +68,12 @@ fun AppDrawer(
                         // If logged in, display user details
                         val userName = currentUser?.username
                         val userEmail = currentUser?.email
+                        Log.d("AppDrawer", "Logged-in user - Username: $userName, Email: $userEmail")
                         UserHeader(userName = userName, userEmail = userEmail)
                     } else {
                         // If not logged in, show login and signup buttons
                         UserHeader(userName = null, userEmail = null) // Show guest info
+                        Log.d("AppDrawer", "No user logged in")
                         Spacer(modifier = Modifier.height(16.dp))
                         LoginSignupButtons(navController = navController)
                     }
@@ -145,7 +151,7 @@ fun DrawerItems(navController: NavHostController, isLoggedIn: Boolean) {
                     "Orders" -> OrdersDestination.route
                     "Favourites" -> FavouritesDestination.route
                     "Profile" -> {
-                        if (isLoggedIn) HomeDestination.route else LogInDestination.route
+                        if (isLoggedIn) ProfileDestination.route else LogInDestination.route
                     }
                     else -> HomeDestination.route
                 }

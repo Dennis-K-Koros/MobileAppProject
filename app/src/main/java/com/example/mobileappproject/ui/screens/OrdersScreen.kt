@@ -54,7 +54,7 @@ fun OrdersScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 KaziHubTopAppBar(
-                    title = stringResource(R.string.app_name),
+                    title = stringResource(R.string.orders),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },

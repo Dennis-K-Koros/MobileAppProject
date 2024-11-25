@@ -20,7 +20,7 @@ interface UserDao {
     @Delete
     suspend fun delete(user: User)
 
-    @Query("SELECT * from user WHERE id = :userId")
+    @Query("SELECT * from user WHERE id = :userId  LIMIT 1")
     fun getUser(userId: String): Flow<User>
 
 

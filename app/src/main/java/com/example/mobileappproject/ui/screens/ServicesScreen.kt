@@ -78,7 +78,7 @@ fun ServicesScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 KaziHubTopAppBar(
-                    title = stringResource(R.string.app_name),
+                    title = stringResource(R.string.services),
                     canNavigateBack = true,
                     scrollBehavior = scrollBehavior,
                     navigateUp = { navController.popBackStack() },
