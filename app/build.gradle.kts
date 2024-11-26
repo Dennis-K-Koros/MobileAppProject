@@ -67,6 +67,8 @@ dependencies {
     //Room
     implementation("androidx.room:room-runtime:2.5.0")
     implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.navigation.testing)
+    implementation(libs.androidx.ui.test.junit4.android)
     ksp("androidx.room:room-compiler:2.5.0")
     implementation("androidx.room:room-ktx:2.5.0")
 

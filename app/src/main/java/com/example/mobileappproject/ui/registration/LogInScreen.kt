@@ -120,7 +120,8 @@ fun LoginScreen(
                                 navController.navigate(HomeDestination.route) {
                                     popUpTo(LogInDestination.route) { inclusive = true }
                                 }
-                            }
+                            }else
+                                errorMessage = "Login failed. Incorrect password or email."
                         }
                     }
                 },

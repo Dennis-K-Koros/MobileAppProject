@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.State
+import kotlinx.coroutines.flow.Flow
 
 class ServiceViewModel(private val repository: ServiceRepository) : ViewModel() {
 
@@ -50,4 +51,8 @@ class ServiceViewModel(private val repository: ServiceRepository) : ViewModel() 
             fetchServices() // Refresh services after deletion
         }
     }
+    fun getServiceById(serviceId: String): Flow<Service?> {
+        return repository.getServiceStream(serviceId)
+    }
+
 }
